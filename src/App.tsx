@@ -1,23 +1,22 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Section } from './components/Section';
 import { AppContainer } from './components/AppContainer';
 import { NavigationBar } from './components/NavigationBar';
 import { Header } from './components/Header';
-import { Vault, VaultActions } from './libs/vault';
+import { Vault } from './libs/vault';
 
 function App() {
-  const appRef = useRef<HTMLDivElement>(null);
-
-  const { visible } = Vault.get('toast');
+  const { visible, toggle } = Vault.useStore('toast');
 
   useEffect(() => {
-    return Vault.subscribe('toast', (state) => {
+    return Vault.store('toast').subscribe((state) => {
+      console.log('Vault.getState():', Vault.store('toast').getState().visible);
       console.log('state changed:', state.visible);
     });
   }, []);
 
   return (
-    <AppContainer ref={appRef}>
+    <AppContainer>
       <Header>{'Wedding'}</Header>
       <NavigationBar />
       <Section>
@@ -25,11 +24,7 @@ function App() {
         <span>{'Section 1-2'}</span>
         <button
           onClick={() => {
-            if (visible) {
-              Vault.dispatch(VaultActions.toast.hide());
-            } else {
-              Vault.dispatch(VaultActions.toast.show());
-            }
+            toggle();
           }}
         >
           {visible ? 'hide' : 'show'}
