@@ -3,37 +3,32 @@ import { Section } from './components/Section';
 import { AppContainer } from './components/AppContainer';
 import { NavigationBar } from './components/NavigationBar';
 import { Header } from './components/Header';
-import { Vault } from './libs/vault';
+import { vault } from './libs/vault';
 
 function App() {
-  const { visible, toggle } = Vault.useStore('toast');
+  const { list, actions } = vault.useStore('guestbook');
 
   useEffect(() => {
-    return Vault.store('toast').subscribe((state) => {
-      console.log('Vault.getState():', Vault.store('toast').getState().visible);
-      console.log('state changed:', state.visible);
-    });
-  }, []);
+    actions.load();
+  }, [actions]);
 
   return (
     <AppContainer>
       <Header>{'Wedding'}</Header>
       <NavigationBar />
       <Section>
-        <span>{'Section 1-1'}</span>
-        <span>{'Section 1-2'}</span>
-        <button
-          onClick={() => {
-            toggle();
-          }}
-        >
-          {visible ? 'hide' : 'show'}
-        </button>
+        <span>{'Section 1'}</span>
       </Section>
-      <Section>{'Section 2'}</Section>
+      <Section>
+        <span>{'Section 2'}</span>
+      </Section>
       <Section>{'Section 3'}</Section>
       <Section>{'Section 4'}</Section>
-      {visible && <div>{'toast'}</div>}
+      <Section>
+        {list.map((item) => {
+          return <div key={item.id}>{item.message}</div>;
+        })}
+      </Section>
     </AppContainer>
   );
 }
