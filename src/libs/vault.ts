@@ -25,7 +25,9 @@ const store = storeBuilder<Store>()
     list: [],
     actions: {
       async load(): Promise<void> {
-        set({ list: await repositories.guestbook.list() });
+        if (get().list.length === 0) {
+          set({ list: await repositories.guestbook.list() });
+        }
       },
       async add(data: GuestbookModel): Promise<void> {
         await repositories.guestbook.upsert(data);
